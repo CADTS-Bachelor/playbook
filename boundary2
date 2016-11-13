@@ -1,0 +1,205 @@
+# -*- coding: utf-8 -*-
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
+from PyQt4 import QtGui, QtCore
+import sys
+
+QTextCodec.setCodecForTr(QTextCodec.codecForName("utf8"))
+
+
+class MainWindow(QtGui.QMainWindow):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+
+        self.stockdialog = StockDialog()
+        self.setCentralWidget(self.stockdialog)
+        self.createActions()
+        self.createMenus()
+
+        self.setWindowTitle("测试平台")
+        self.resize(800, 500)
+
+        self.setWindowFlags(Qt.WindowMinMaxButtonsHint)
+
+    def open(self):
+        filename = QtGui.QFileDialog.getOpenFileName(self, 'Open file',
+                                                     '/home')
+        fname = open(filename)
+        data = fname.read()
+        self.remarkTextEdit.setText(data)
+
+    def save(self):
+        fileName = QtGui.QFileDialog.getSaveFileName(self)
+
+    def about(self):
+        QtGui.QMessageBox.about(self, "About test",
+                                "This is the Pyqt test! ")
+
+    def createActions(self):
+        self.openAct = QtGui.QAction("&Open...", self, shortcut="Ctrl+O",
+                                     triggered=self.open)
+
+        self.exitAct = QtGui.QAction("&Exit", self, shortcut="Ctrl+Q",
+                                     triggered=self.close)
+
+        self.aboutAct = QtGui.QAction("&About", self, triggered=self.about)
+
+        self.saveAct = QtGui.QAction("Save", self, shortcut="Ctrl+S",
+                                     triggered=self.save)
+
+    def createMenus(self):
+        self.fileMenu = QtGui.QMenu("&File", self)
+        self.fileMenu.addAction(self.openAct)
+        self.fileMenu.addAction(self.saveAct)
+        self.fileMenu.addSeparator()
+        self.fileMenu.addAction(self.exitAct)
+
+        self.helpMenu = QtGui.QMenu("&Help", self)
+        self.helpMenu.addAction(self.aboutAct)
+
+        self.menuBar().addMenu(self.fileMenu)
+        self.menuBar().addSeparator()
+        self.menuBar().addMenu(self.helpMenu)
+
+
+class StockDialog(QDialog):
+    def __init__(self, parent=None):
+        super(StockDialog, self).__init__(parent)
+
+        LeftlistWidget = QListWidget(self)                #左方列表
+        LeftlistWidget.insertItem(0, self.tr("列表1"))
+        LeftlistWidget.insertItem(1, self.tr("列表2"))
+        LeftlistWidget.insertItem(2, self.tr("列表3"))
+
+        LeftLayout = QHBoxLayout()                       #左方布局
+        LeftLayout.setMargin(10)
+        LeftLayout.addWidget(LeftlistWidget)
+
+        Middlestacktext = QStackedWidget()              #中间文本
+        Middlestacktext.setFrameStyle(QFrame.Panel | QFrame.Raised)
+        text1 = Text1()
+        text2 = Text2()
+        text3 = Text3()
+        Middlestacktext.addWidget(text1)
+        Middlestacktext.addWidget(text2)
+        Middlestacktext.addWidget(text3)
+
+        self.connect(LeftlistWidget, SIGNAL("currentRowChanged(int)"), Middlestacktext, SLOT("setCurrentIndex(int)"))
+
+        MiddleLayout = QHBoxLayout()             #中间布局
+        MiddleLayout.setMargin(10)
+        MiddleLayout.addWidget(Middlestacktext)
+
+        Rightstacktext = QStackedWidget()                              #右方列表
+        Rightstacktext.setFrameStyle(QFrame.Panel | QFrame.Raised)
+        text4 = Text4()
+        text5 = Text5()
+        text6 = Text6()
+        Rightstacktext.addWidget(text4)
+        Rightstacktext.addWidget(text5)
+        Rightstacktext.addWidget(text6)
+
+        NewPushButton = QPushButton(self.tr("新建"))                #右方按钮
+        TestPushButton = QPushButton(self.tr("实验"))
+        DeletePushButton = QPushButton(self.tr("删除"))
+        BottomLayout = QHBoxLayout()
+        BottomLayout.addStretch()
+        BottomLayout.addWidget(NewPushButton)
+        BottomLayout.addWidget(TestPushButton)
+        BottomLayout.addWidget(DeletePushButton)
+
+        RightLayout = QVBoxLayout()                         #右方布局
+        RightLayout.setMargin(10)
+        RightLayout.addWidget(Rightstacktext)
+        RightLayout.addLayout(BottomLayout)
+
+        self.connect(LeftlistWidget, SIGNAL("currentRowChanged(int)"), Rightstacktext, SLOT("setCurrentIndex(int)"))
+
+        mainLayout = QGridLayout(self)                   #主布局
+        mainLayout.setMargin(20)
+        mainLayout.setSpacing(15)
+        mainLayout.addLayout(LeftLayout, 1, 0)
+        mainLayout.addLayout(MiddleLayout, 1, 1)
+        mainLayout.addLayout(RightLayout, 1, 2)
+        mainLayout.setSizeConstraint(QLayout.SetFixedSize)
+
+
+class Text1(QWidget):
+    def __init__(self, parent=None):
+        super(Text1, self).__init__(parent)
+        label1 = QLabel()
+
+        remarkTextEdit = QTextEdit()
+
+        layout = QGridLayout(self)
+        layout.addWidget(label1, 3, 0)
+        layout.addWidget(remarkTextEdit, 10, 1)
+
+
+class Text2(QWidget):
+    def __init__(self, parent=None):
+        super(Text2, self).__init__(parent)
+        label2 = QLabel()
+
+        remarkTextEdit = QTextEdit()
+
+        layout = QGridLayout(self)
+        layout.addWidget(label2, 3, 0)
+        layout.addWidget(remarkTextEdit, 10, 1)
+
+
+class Text3(QWidget):
+    def __init__(self, parent=None):
+        super(Text3, self).__init__(parent)
+        label3 = QLabel()
+
+        remarkTextEdit = QTextEdit()
+
+        layout = QGridLayout(self)
+        layout.addWidget(label3, 3, 0)
+        layout.addWidget(remarkTextEdit, 10, 1)
+
+
+class Text4(QWidget):
+    def __init__(self, parent=None):
+        super(Text4, self).__init__(parent)
+        label4 = QLabel()
+
+        remarkTextEdit = QTextEdit()
+
+        layout = QGridLayout(self)
+        layout.addWidget(label4, 3, 0)
+        layout.addWidget(remarkTextEdit, 10, 1)
+
+
+class Text5(QWidget):
+    def __init__(self, parent=None):
+        super(Text5, self).__init__(parent)
+        label5 = QLabel()
+
+        remarkTextEdit = QTextEdit()
+
+        layout = QGridLayout(self)
+        layout.addWidget(label5, 3, 0)
+        layout.addWidget(remarkTextEdit, 10, 1)
+
+
+class Text6(QWidget):
+    def __init__(self, parent=None):
+        super(Text6, self).__init__(parent)
+        label6 = QLabel()
+
+        remarkTextEdit = QTextEdit()
+
+        layout = QGridLayout(self)
+        layout.addWidget(label6, 3, 0)
+        layout.addWidget(remarkTextEdit, 10, 1)
+
+
+if __name__ == '__main__':
+    import sys
+
+    app = QtGui.QApplication(sys.argv)
+    mainWin = MainWindow()
+    mainWin.show()
+    sys.exit(app.exec_())
