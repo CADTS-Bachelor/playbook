@@ -20,11 +20,13 @@ def check_script(script_name, *args, **kwargs):
         if os.path.isfile(script):
             start = time.time()
             try:
-                subprocess.check_call(('python', script, *args), stdout=FNULL)
+                times = 10
+                for i in range(times):
+                    subprocess.check_call(('python', script) + args, stdout=FNULL)
+
+                cost = time.time() - start
+                print('{0}: {1}ms'.format(name, int(cost * 1000 / times)))
             except subprocess.CalledProcessError as ex:
                 print('{0}: error {1}'.format(name, ex.returncode))
-            else:
-                cost = time.time() - start
-                print('{0}: {1}ms'.format(name, int(cost * 1000)))
         else:
             print('{0}: not exists'.format(name))
