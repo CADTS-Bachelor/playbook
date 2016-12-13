@@ -7,7 +7,7 @@ import re
 import sys
 def printlist(list):
     for value,key in list :
-        print `key` + ":" + `value`
+        print str(key) + " : " + str(value)
 with open(sys.argv[1],'r') as file :
     data = file.read()
     words = re.compile('[a-zA-Z0-9]+')
