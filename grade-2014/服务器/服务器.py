@@ -1,0 +1,20 @@
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+import xmlrpclib
+
+def add(x,y):
+    return x+y
+def subtract(x,y):
+    return x-y
+def multiply(x,y):
+    return x*y
+def divide(x,y):
+    return x/y
+
+server = SimpleXMLRPCServer(("localhost", 8001))
+print "Listening on port 8001..."
+server.register_multicall_functions()
+server.register_function(add, "add")
+server.register_function(subtract, "subtract")
+server.register_function(multiply, "multiply")
+server.register_function(divide, "divide")
+server.serve_forever()
