@@ -1,3 +1,6 @@
+#power_on & power_off
+#by WangPeng & LiJiahe
+
 from vboxapi import VirtualBoxManager
 
 class VirtualBox(): #Hypervisor
