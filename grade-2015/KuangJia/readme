@@ -1,0 +1,3 @@
+destory_time会报错
+TypeError: 'destory_time' is an invalid keyword argument for Scene
+换个名字就好了
