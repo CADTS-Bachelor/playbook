@@ -25,12 +25,13 @@ session.add(scene)  # 添加到session:
 session.commit()  # 提交即保存到数据库:
 session.close()  # 关闭session:
 
-# 查,  destory_time = '2015-12-21 12:20:54'
+# 查
 session = DB_Session()
 scene_info = session.query(Scene).filter(Scene.id == 1).one()
 print(scene_info.name)
 session.close()
-'''# 改
+'''
+# 改
 session = DB_Session()
 session.query(Scene).filter(Scene.id == 1).update({'name': 'xinxin'})
 session.commit()
