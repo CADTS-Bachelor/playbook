@@ -12,7 +12,7 @@ class Scene(Base):
     id = Column(Integer, primary_key=True)      # 表结构
     name = Column(String(20), unique=True)
     create_time = Column(DateTime())
-    wangwei = Column(DateTime())
+    destory_time = Column(DateTime())
 
 # 初始化数据库连接:('数据库类型+数据库驱动名称://用户名:口令@机器地址:端口号/数据库名)
 engine = create_engine('mysql+mysqlconnector://root:123@localhost:3306/test')
@@ -20,7 +20,7 @@ DB_Session = sessionmaker(bind = engine)  # 创建DBSession类型:
 
 # 增
 session = DB_Session()  # 创建session对象:
-scene = Scene(id=1, name = 'xilming', create_time = '2015-12-21 12:20:21',wangwei = '2015-12-21 12:20:54')  # 创建新Scene对象:
+scene = Scene(id=1, name = 'xilming', create_time = '2015-12-21 12:20:21',destory_time = '2015-12-21 12:20:54')  # 创建新Scene对象:
 session.add(scene)  # 添加到session:
 session.commit()  # 提交即保存到数据库:
 session.close()  # 关闭session:
