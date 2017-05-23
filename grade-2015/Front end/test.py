@@ -37,9 +37,22 @@ class Ui_MainWindow(QtGui.QMainWindow,QWidget):
         self.pushButton_2 = QtGui.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(0, 80, 381, 100))
         self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
+        self.label = QtGui.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(380, 0, 411, 551))
+        self.label.setObjectName(_fromUtf8("showView"))
+
+
+
+        '''
+        image = QtGui.QImage()
+        image.load('image1.png')
+        self.label.setPixmap(QtGui.QPixmap.fromImage(image))
+        '''
+        '''
         self.graphicsView = QtGui.QGraphicsView(self.centralwidget)
         self.graphicsView.setGeometry(QtCore.QRect(380, 0, 411, 551))
         self.graphicsView.setObjectName(_fromUtf8("graphicsView"))
+        '''
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
@@ -69,15 +82,39 @@ class Ui_MainWindow(QtGui.QMainWindow,QWidget):
         pushButton_2=QToolButton()
         MainWindow.setWindowTitle(_translate("MainWindow", "微型测试平台", None))
         self.pushButton.setText(_translate("MainWindow", "网络拓扑1", None))
-        self.pushButton_2.setText(_translate("MainWindow", "网络拓扑2", None))
         self.pushButton.setIcon(QIcon("image1.png"))
         self.pushButton.setIconSize(QSize(400, 100))
+        self.pushButton_2.setText(_translate("MainWindow", "网络拓扑2", None))
         self.pushButton_2.setIcon(QIcon("image1.png"))
         self.pushButton_2.setIconSize(QSize(400, 100))
+        
+        #按钮响应
+        self.connect(self.pushButton, QtCore.SIGNAL("clicked()"), self.showimage1)
+        self.connect(self.pushButton_2, QtCore.SIGNAL("clicked()"), self.showimage2)
+
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuEdit.setTitle(_translate("MainWindow", "Edit", None))
         self.menuView.setTitle(_translate("MainWindow", "View", None))
         self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
+
+
+
+
+
+    def showimage1(self):                 #添加图片
+
+        image = QtGui.QImage()
+        image.load('image3.png')
+        self.label.setPixmap(QtGui.QPixmap.fromImage(image))
+
+
+
+    def showimage2(self):                #添加图片
+
+        image = QtGui.QImage()
+        image.load('image2.png')
+        self.label.setPixmap(QtGui.QPixmap.fromImage(image))
+
 
 app = QtGui.QApplication(sys.argv)
 main = Ui_MainWindow()
