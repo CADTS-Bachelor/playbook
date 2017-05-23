@@ -1,62 +1,100 @@
 from vboxapi import VirtualBoxManager
 
-class VirtualBox(): #Hypervisor
+
+class VirtualBox():  # Hypervisor
     def __init__(self):
         self.mgr = VirtualBoxManager(None, None)
         self.vbox = self.mgr.vbox
 
-    def power_on(self,vm):
-        name = vm
-        mach = self.vbox.findMachine(name)
-        self.session = self.mgr.getSessionObject(self.vbox)
-        progress = mach.launchVMProcess(self.session, "gui", "")
-        progress.waitForCompletion(-1)
-        self.mgr.closeMachineSession(self.session)
+    def getsession(self, vm):
+        try:
+            mach = self.vbox.findMachine(vm)
+            session = self.mgr.getSessionObject(mach)
+            mach.lockMachine(session, 1)
+            return session
+        except Exception,e:
+            print e
 
-    def power_off(self,vm):
-        name = vm
-        mach = self.vbox.findMachine(name)
-        self.session = self.mgr.openMachineSession(mach)
-        self.session.console.powerDown()
-        self.mgr.closeMachineSession(self.session)
+    def power_on(self, vm):
+        try:
+            mach = self.vbox.findMachine(vm)
+            session = self.mgr.getSessionObject(mach)
+            progress = mach.launchVMProcess(session, "gui", "")
+            progress.waitForCompletion(-1)
+            self.mgr.closeMachineSession(session)
+            print "power_on success !"
+        except Exception, e:
+            print e
 
-    def clone(self,old,new):
-        old_mach = self.vbox.findMachine(old)
-        new_mach = self.vbox.createMachine("",new,"",old_mach.OSTypeId,"")
-        progress = old_mach.cloneTo(new_mach,3,None)
-        print "Cloning,please wait."
-        progress.waitForCompletion(-1)
-        new_mach.saveSettings()
-        self.vbox.registerMachine(new_mach)
+    def power_off(self, vm):
+        session = self.getsession(vm)
+        try:
+            progress = session.console.powerDown()
+            progress.waitForCompletion(-1)
+            session.unlockMachine()
+            print "power_off success !"
+        except Exception,e:
+            print e
+
+    def clone(self, src_vm, dst_vm):
+        try:
+            src_mach = self.vbox.findMachine(src_vm)
+            dst_mach = self.vbox.createMachine("", dst_vm, "", src_mach.OSTypeId, "")
+            progress = src_mach.cloneTo(dst_mach, 3, None)
+            print "Cloning,please wait."
+            progress.waitForCompletion(-1)
+            dst_mach.saveSettings()
+            self.vbox.registerMachine(dst_mach)
+            print "clone success !"
+        except Exception, e:
+            print e
+
+    def reset(self, vm):
+        session = self.getsession(vm)
+        try:
+            session.console.reset()
+            session.unlockMachine()
+            print "reset success !"
+        except Exception, e:
+            print e
+
+    def create_snapshot(self, vm, name):
+        session = self.getsession(vm)
+        try:
+            progress = session.machine.takeSnapshot(name, "", True)[0]
+            print "creating snapshot."
+            progress.waitForCompletion(-1)
+            session.unlockMachine()
+            print "create_snapshot success !"
+        except Exception, e:
+            print e
+
+    def revert_snapshot(self, vm, name):
+        session = self.getsession(vm)
+        try:
+            progress = session.machine.restoreSnapshot(session.machine.findSnapshot(name))
+            print "reverting snapshot."
+            progress.waitForCompletion(-1)
+            session.unlockMachine()
+            print "revert_snapshot success !"
+        except Exception, e:
+            print e
 
     def add_nic(self, vm, index, vlan_name):
         raise NotImplementedError()
 
+
 if __name__ == "__main__":
     test = VirtualBox()
-    #power_on
-    vm_name = raw_input("power_on:")
-    try:
-        test.power_on(vm_name)
-    except Exception,e:
-        print e
-
-    #power_off
-    vm_name = raw_input("power_off:")
-    try:
-        test.power_off(vm_name)
-    except Exception,e:
-        print e
-
-    #clone
-    old = raw_input("old_mach:")
-    new = raw_input("new_mach:")
-    try:
-        test.clone(old,new)
-        print "success!"
-    except Exception,e:
-        print e
-
-
-
-
+    vm = raw_input("vm:")
+    test.power_on(vm)
+    raw_input("reset")
+    test.reset(vm)
+    raw_input("power_off")
+    test.power_off(vm)
+    raw_input("create_snapshot")
+    test.create_snapshot(vm, "test")
+    raw_input("revert_snapshot")
+    test.revert_snapshot(vm, "test")
+    raw_input("clone")
+    test.clone(vm, "dst_test")
