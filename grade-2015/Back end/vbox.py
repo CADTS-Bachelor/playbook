@@ -1,6 +1,5 @@
 from vboxapi import VirtualBoxManager
 
-
 class VirtualBox():  # Hypervisor
     def __init__(self):
         self.mgr = VirtualBoxManager(None, None)
@@ -12,29 +11,40 @@ class VirtualBox():  # Hypervisor
             session = self.mgr.getSessionObject(mach)
             mach.lockMachine(session, 1)
             return session
-        except Exception,e:
+        except Exception, e:
             print e
+            return "error"
+
+
 
     def power_on(self, vm):
         try:
             mach = self.vbox.findMachine(vm)
             session = self.mgr.getSessionObject(mach)
+        except Exception,e:
+            print e
+            return 0
+        try:
             progress = mach.launchVMProcess(session, "gui", "")
             progress.waitForCompletion(-1)
-            self.mgr.closeMachineSession(session)
             print "power_on success !"
         except Exception, e:
             print e
+        finally:
+            self.mgr.closeMachineSession(session)
 
     def power_off(self, vm):
         session = self.getsession(vm)
+        if session == "error":
+            return 0
         try:
             progress = session.console.powerDown()
             progress.waitForCompletion(-1)
-            session.unlockMachine()
             print "power_off success !"
         except Exception,e:
             print e
+        finally:
+            session.unlockMachine()
 
     def clone(self, src_vm, dst_vm):
         try:
@@ -51,34 +61,43 @@ class VirtualBox():  # Hypervisor
 
     def reset(self, vm):
         session = self.getsession(vm)
+        if session == "error":
+            return 0
         try:
             session.console.reset()
-            session.unlockMachine()
             print "reset success !"
         except Exception, e:
             print e
+        finally:
+            session.unlockMachine()
 
     def create_snapshot(self, vm, name):
         session = self.getsession(vm)
+        if session == "error":
+            return 0
         try:
             progress = session.machine.takeSnapshot(name, "", True)[0]
             print "creating snapshot."
             progress.waitForCompletion(-1)
-            session.unlockMachine()
             print "create_snapshot success !"
         except Exception, e:
             print e
+        finally:
+            session.unlockMachine()
 
     def revert_snapshot(self, vm, name):
         session = self.getsession(vm)
+        if session == "error":
+            return 0
         try:
             progress = session.machine.restoreSnapshot(session.machine.findSnapshot(name))
             print "reverting snapshot."
             progress.waitForCompletion(-1)
-            session.unlockMachine()
             print "revert_snapshot success !"
         except Exception, e:
             print e
+        finally:
+            session.unlockMachine()
 
     def add_nic(self, vm, index, vlan_name):
         raise NotImplementedError()
